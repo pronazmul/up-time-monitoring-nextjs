@@ -11,6 +11,7 @@ const {
   errorHandler,
 } = require('./middlewares/common/errorHandler')
 const userRouter = require('./routers/userRouter')
+const mongoConnection = require('./config/db')
 
 // Configuraton
 const app = express()
@@ -19,6 +20,9 @@ dotenv.config()
 // Request Middleware
 app.use(cors())
 app.use(express.json())
+
+// Database Connection:
+mongoConnection()
 
 // Public Assets Path
 app.use(express.static(path.join(__dirname, 'public')))
