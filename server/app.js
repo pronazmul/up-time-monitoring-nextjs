@@ -4,6 +4,7 @@ const dotenv = require('dotenv')
 const colors = require('colors')
 const path = require('path')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 
 // Internal Dependencies
 const {
@@ -20,6 +21,9 @@ dotenv.config()
 // Request Middleware
 app.use(cors())
 app.use(express.json())
+
+// Signed Cookie Parser
+app.use(cookieParser(process.env.COOKIE_SECRET))
 
 // Database Connection:
 mongoConnection()

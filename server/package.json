@@ -4,7 +4,7 @@
   "description": "Uptime Monitoring API project for nextjs application.",
   "main": "app.js",
   "scripts": {
-    "server": "NODE_ENV=development nodemon app.js",
+    "dev": "NODE_ENV=development nodemon app.js",
     "start": "NODE_ENV=production node app.js",
     "data:import": "node seeder/seeder",
     "data:destroy": "node seeder/seeder -d"
@@ -16,11 +16,15 @@
   "author": "Nazmul Huda",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "colors": "^1.4.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "http-errors": "^1.8.1",
-    "mongoose": "^6.0.13"
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.13",
+    "multer": "^1.4.3"
   }
 }
