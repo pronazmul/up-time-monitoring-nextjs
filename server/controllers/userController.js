@@ -198,5 +198,44 @@ const allUser = async (req, res, next) => {
   }
 }
 
+/**
+ * @description Delete a user.
+ * @route DELETE /api/user
+ * @access Protected (Admin Only)
+ */
+
+const deleteUser = async (req, res, next) => {
+  try {
+    const user = await People.findById(req.params.id)
+    if (user) {
+      if (user.avatar !== 'demoavatar.png') {
+        const filePath = path.join(
+          __dirname,
+          '../public/uploads/avatars/',
+          user.avatar
+        )
+        unlink(filePath, (err) => {
+          if (err) {
+            console.log(err)
+          }
+        })
+      }
+      user.remove()
+      res.status(200).json({ msg: 'User Successfully Deleted!' })
+    } else {
+      next(createError(400, 'Unknown User!'))
+    }
+  } catch (error) {
+    next(createError(500, 'Server Error!'))
+  }
+}
+
 // Module Exports
-module.exports = { userSignup, userSignin, allUser, userProfile, updateProfile }
+module.exports = {
+  userSignup,
+  userSignin,
+  allUser,
+  userProfile,
+  updateProfile,
+  deleteUser,
+}

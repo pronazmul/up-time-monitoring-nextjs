@@ -9,6 +9,7 @@ const {
   userProfile,
   userSignup,
   updateProfile,
+  deleteUser,
 } = require('../controllers/userController')
 const loginChecker = require('../middlewares/auth/loginChecker')
 const roleChecker = require('../middlewares/auth/roleChecker')
@@ -45,6 +46,11 @@ router
 
 //  Protected Route (Admin Only)
 router.route('/').get(loginChecker, roleChecker('admin'), allUser)
+
+//  Protected Route (Admin Only)
+router
+  .route('/delete/:id')
+  .delete(loginChecker, roleChecker('admin'), deleteUser)
 
 // Module Exports
 module.exports = router
