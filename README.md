@@ -39,7 +39,7 @@
 > Note: This should be the errors type while backend data validation.
 
 ```sh
-Data Validation Error: 
+Request-Data / From-Data Error: 
 {
     "errors": {
         "email": {
@@ -51,7 +51,7 @@ Data Validation Error:
     }
 }
 
-Application Common Error: 
+Application Common Error like (400, 401, 500): 
 {
     "errors": {
         "common": {
