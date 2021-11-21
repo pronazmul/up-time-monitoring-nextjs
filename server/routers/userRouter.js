@@ -8,11 +8,13 @@ const {
   userSignin,
   userProfile,
   userSignup,
+  updateProfile,
 } = require('../controllers/userController')
 const loginChecker = require('../middlewares/auth/loginChecker')
 const roleChecker = require('../middlewares/auth/roleChecker')
 const {
   userSignUpValidator,
+  userProfileUpdateValidator,
 } = require('../middlewares/dataValidation/userValidator')
 const {
   validationHandler,
@@ -29,6 +31,17 @@ router.route('/signin').post(userSignin)
 
 // Protected Route (Logged in user)
 router.route('/profile').get(loginChecker, userProfile)
+
+// Protected Route (Logged in user)
+router
+  .route('/profile/update')
+  .put(
+    loginChecker,
+    avatarUpload,
+    userProfileUpdateValidator,
+    validationHandler,
+    updateProfile
+  )
 
 //  Protected Route (Admin Only)
 router.route('/').get(loginChecker, roleChecker('admin'), allUser)

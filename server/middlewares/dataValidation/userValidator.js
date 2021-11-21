@@ -47,4 +47,28 @@ const userSignUpValidator = [
     ),
 ]
 
-module.exports = { userSignUpValidator }
+// validate registration form data
+const userProfileUpdateValidator = [
+  check('name')
+    .optional()
+    .isAlpha('en-US', { ignore: ' -' })
+    .withMessage('Name must be alphabets only')
+    .trim(),
+  check('email')
+    .optional()
+    .isEmail()
+    .withMessage('Please enter a valid email address')
+    .trim(),
+  check('mobile')
+    .optional()
+    .isMobilePhone('bn-BD', { strictMode: true })
+    .withMessage('Please enter a valid mobile number'),
+  check('password')
+    .optional()
+    .isStrongPassword()
+    .withMessage(
+      'Password must be at least 8 characters long, contain at least one number and one special character'
+    ),
+]
+
+module.exports = { userSignUpValidator, userProfileUpdateValidator }

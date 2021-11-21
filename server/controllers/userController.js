@@ -1,6 +1,8 @@
 // External Dependencies
 const createError = require('http-errors')
 const bcrypt = require('bcrypt')
+const path = require('path')
+const { unlink } = require('fs')
 
 // Internal Dependencies
 const People = require('../models/userModel')
@@ -112,6 +114,76 @@ const userProfile = async (req, res, next) => {
 }
 
 /**
+ * @description Update Current User Profile.
+ * @route PUT /api/user/profile/update
+ * @access Protected
+ */
+
+const updateProfile = async (req, res, next) => {
+  try {
+    const user = await People.findById(req.user._id)
+    if (user) {
+      user.name = req.body.name || user.name
+      user.email = req.body.email || user.email
+      user.mobile = req.body.mobile || user.mobile
+
+      // Manage Avatar
+      if (req.files && req.files.length > 0) {
+        if (user.avatar !== 'demoavatar.png') {
+          const filePath = path.join(
+            __dirname,
+            '../public/uploads/avatars/',
+            user.avatar
+          )
+          unlink(filePath, (err) => {
+            if (err) {
+              console.log(err)
+            } else {
+              user.avatar = req.files[0].filename
+            }
+          })
+        } else {
+          user.avatar = req.files[0].filename
+        }
+      }
+
+      if (req.body.password) {
+        user.password = await bcrypt.hash(req.body.password, 10)
+      }
+
+      const result = await user.save()
+
+      if (result) {
+        const userData = {
+          _id: result._id,
+          name: result.name,
+          email: result.email,
+          mobile: result.mobile,
+          avatar: result.avatar,
+          role: result.role,
+        }
+        // Generate Auth Token
+        const token = jwtTokenGenerator(userData)
+
+        // Set Cookie:
+        res.cookie(process.env.COOKIE_NAME, token, {
+          maxAge: process.env.JWT_EXPIRY,
+          httpOnly: true,
+          signed: true,
+        })
+        res.status(200).json({ ...userData, token })
+      } else {
+        next(createError(400, 'Unknown User!'))
+      }
+    } else {
+      next(createError(400, 'Unknown User!'))
+    }
+  } catch (error) {
+    next(createError(500, 'Server Error!'))
+  }
+}
+
+/**
  * @description Return All users.
  * @route GET /api/user
  * @access Protected (Admin Only)
@@ -127,4 +199,4 @@ const allUser = async (req, res, next) => {
 }
 
 // Module Exports
-module.exports = { userSignup, userSignin, allUser, userProfile }
+module.exports = { userSignup, userSignin, allUser, userProfile, updateProfile }
