@@ -30,7 +30,30 @@ const userSignup = async (req, res, next) => {
       })
     }
     const result = await newUser.save()
-    res.status(200).json(result)
+
+    // Login User after successfully registered
+    if (result) {
+      const userData = {
+        _id: result._id,
+        name: result.name,
+        email: result.email,
+        mobile: result.mobile,
+        avatar: result.avatar,
+        role: result.role,
+      }
+      // Generate Auth Token
+      const token = jwtTokenGenerator(userData)
+
+      // Set Cookie:
+      res.cookie(process.env.COOKIE_NAME, token, {
+        maxAge: process.env.JWT_EXPIRY,
+        httpOnly: true,
+        signed: true,
+      })
+      res.status(200).json({ ...userData, token })
+    } else {
+      next(createError(500, 'Registration Failed!'))
+    }
   } catch (error) {
     next(createError(500, 'Registration Failed!'))
   }
