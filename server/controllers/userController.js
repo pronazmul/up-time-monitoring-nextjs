@@ -43,10 +43,10 @@ const userSignup = async (req, res, next) => {
  */
 const userSignin = async (req, res, next) => {
   const { mobile, password } = req.body
-  // const passwordIsMatched = await user.matchedPassword(password)
   try {
     const user = await People.findOne({ mobile })
-    if (user) {
+    const passwordIsMatched = await bcrypt.compare(password, user.password)
+    if (user && passwordIsMatched) {
       const userData = {
         _id: user._id,
         name: user.name,

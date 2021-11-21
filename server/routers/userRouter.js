@@ -9,12 +9,20 @@ const {
   userProfile,
   userSignup,
 } = require('../controllers/userController')
-const loginChecker = require('../middlewares/common/loginChecker')
-const roleChecker = require('../middlewares/common/roleChecker')
+const loginChecker = require('../middlewares/auth/loginChecker')
+const roleChecker = require('../middlewares/auth/roleChecker')
+const {
+  userSignUpValidator,
+} = require('../middlewares/dataValidation/userValidator')
+const {
+  validationHandler,
+} = require('../middlewares/dataValidation/validationHandler')
 const avatarUpload = require('../middlewares/upload/avatarUpload')
 
 // Public Routes
-router.route('/signup').post(avatarUpload, userSignup)
+router
+  .route('/signup')
+  .post(avatarUpload, userSignUpValidator, validationHandler, userSignup)
 
 // Public Routes
 router.route('/signin').post(userSignin)

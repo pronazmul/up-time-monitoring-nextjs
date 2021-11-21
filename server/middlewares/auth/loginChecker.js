@@ -9,11 +9,20 @@ const loginChecker = (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     const token = req.headers.authorization.split(' ')[1]
-    const user = jwt.verify(token, process.env.JWT_SECRET)
-    req.user = user
-    next()
+    if (token) {
+      jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+          next(createError(401, 'Unauthorized request!'))
+        } else {
+          req.user = decoded
+          next()
+        }
+      })
+    } else {
+      next(createError(401, 'Unauthorized request!'))
+    }
   } else {
-    next(createError(401, 'Access Denied!'))
+    next(createError(401, 'Unauthorized request!'))
   }
 }
 
