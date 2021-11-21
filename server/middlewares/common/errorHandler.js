@@ -10,10 +10,14 @@ const notFoundHandler = (req, res, next) => {
 const errorHandler = (error, req, res, next) => {
   const errorMessage =
     process.env.NODE_ENV === 'production'
-      ? { message: error.message }
-      : { message: error.message, stack: error.stack }
+      ? { msg: error.message }
+      : { msg: error.message, stack: error.stack }
 
-  res.status(error.status || 500).json(errorMessage)
+  res.status(error.status || 500).json({
+    errors: {
+      common: errorMessage,
+    },
+  })
 }
 
 // Exprot Module
